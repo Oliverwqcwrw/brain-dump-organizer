@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brain Dump Organizer — AI-Powered Note Organizer | Free Tool</title>
+<meta name="description" content="Free AI tool to organize your chaotic thoughts, meeting notes, and brain dumps into structured notes, action items, and summaries. No signup required.">
+<meta name="keywords" content="brain dump organizer, AI note organizer, organize thoughts, action items, meeting notes, free productivity tool">
+<meta property="og:title" content="Brain Dump Organizer — Turn Chaos into Clarity">
+<meta property="og:description" content="Paste your messy notes and let AI organize them into clear action items, summaries, and structured notes. Free, no signup.">
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Brain Dump Organizer",
+  "description": "Free AI-powered tool to organize chaotic thoughts and notes into structured action items and summaries.",
+  "applicationCategory": "ProductivityApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "url": "https://oliverwqcwrw.github.io/brain-dump-organizer/"
+}
+</script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; gap: 10px; }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header h1 span { color: var(--accent); }
+  .badge { background: var(--accent2); color: #000; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+
+  .hero { text-align: center; margin-bottom: 32px; }
+  .hero h2 { font-size: 32px; font-weight: 800; margin-bottom: 10px; }
+  .hero h2 em { color: var(--accent); font-style: normal; }
+  .hero p { color: var(--muted); font-size: 15px; }
+
+  .chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: var(--muted); }
+
+  .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  input[type=text], input[type=password], select, textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; line-height: 1.6; }
+
+  /* Provider selector */
+  .provider-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
+  .prov-btn { background: var(--surface2); border: 2px solid var(--border); border-radius: 8px; padding: 8px 6px; cursor: pointer; text-align: center; color: var(--text); font-size: 12px; font-weight: 600; transition: all 0.2s; }
+  .prov-btn:hover { border-color: var(--accent); }
+  .prov-btn.active { border-color: var(--accent); background: rgba(88,166,255,0.1); color: var(--accent); }
+  .prov-btn .tag { display: block; font-size: 10px; color: var(--accent2); font-weight: 400; margin-top: 2px; }
+
+  .row { display: flex; gap: 8px; align-items: flex-end; margin-top: 10px; }
+  .row .input-group { flex: 1; }
+  .save-btn { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .save-btn:hover { opacity: 0.85; }
+
+  /* Dump area */
+  #dump-input { min-height: 320px; font-size: 14px; }
+
+  .char-count { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; }
+
+  /* Mode selector */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .mode-btn { background: var(--surface2); border: 2px solid var(--border); border-radius: 8px; padding: 10px 12px; cursor: pointer; text-align: left; color: var(--text); font-size: 13px; transition: all 0.2s; }
+  .mode-btn:hover { border-color: var(--accent4); }
+  .mode-btn.active { border-color: var(--accent4); background: rgba(210,168,255,0.08); }
+  .mode-btn .icon { font-size: 18px; display: block; margin-bottom: 4px; }
+  .mode-btn .name { font-weight: 600; font-size: 13px; }
+  .mode-btn .desc { font-size: 11px; color: var(--muted); }
+
+  /* Templates */
+  .templates { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tpl-btn { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+  .tpl-btn:hover { color: var(--text); border-color: var(--accent); }
+
+  /* Action button */
+  .go-btn {
+    width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent4));
+    color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 16px;
+    font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 4px;
+  }
+  .go-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .go-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .progress { height: 3px; background: var(--border); border-radius: 2px; margin: 10px 0; overflow: hidden; display: none; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent4)); animation: prog 1.5s ease-in-out infinite; }
+  @keyframes prog { 0%{width:10%} 50%{width:70%} 100%{width:90%} }
+
+  .err-msg { background: rgba(247,129,102,0.12); color: var(--accent3); border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 10px; display: none; }
+
+  /* Results */
+  #results { display: none; margin-top: 24px; }
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .results-title { font-size: 18px; font-weight: 700; }
+
+  .action-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .action-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .action-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .action-btn.primary { background: var(--accent2); color: #000; border-color: var(--accent2); }
+  .action-btn.primary:hover { opacity: 0.85; color: #000; }
+
+  .sections-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width: 700px) { .sections-grid { grid-template-columns: 1fr; } }
+
+  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .result-card h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
+  .result-card h4.blue { color: var(--accent); }
+  .result-card h4.green { color: var(--accent2); }
+  .result-card h4.orange { color: var(--accent3); }
+  .result-card h4.purple { color: var(--accent4); }
+  .result-card.full { grid-column: 1 / -1; }
+
+  .action-list { list-style: none; }
+  .action-list li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; line-height: 1.5; }
+  .action-list li:last-child { border-bottom: none; }
+  .action-list li input[type=checkbox] { margin-top: 3px; accent-color: var(--accent2); flex-shrink: 0; width: 15px; height: 15px; cursor: pointer; }
+  .action-list li label { cursor: pointer; color: var(--text); font-size: 14px; }
+  .action-list li label.done { text-decoration: line-through; color: var(--muted); }
+
+  .summary-text { font-size: 14px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+
+  .tag-list { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--muted); }
+
+  .raw-md { font-size: 13px; background: var(--surface2); border-radius: 8px; padding: 14px; white-space: pre-wrap; color: #cdd9e5; line-height: 1.7; max-height: 400px; overflow-y: auto; }
+
+  /* History */
+  .history-list { max-height: 200px; overflow-y: auto; }
+  .history-item { padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: space-between; transition: background 0.15s; }
+  .history-item:hover { background: var(--surface2); color: var(--text); }
+  .history-item .time { font-size: 11px; }
+  .history-item .del { color: var(--accent3); font-size: 14px; opacity: 0; transition: opacity 0.15s; }
+  .history-item:hover .del { opacity: 1; }
+
+  /* Donate */
+  .donate { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 20px; text-align: center; margin-top: 40px; }
+  .donate h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .donate p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 540px; margin: 0 auto; }
+  @media(max-width: 500px) { .wallet-grid { grid-template-columns: 1fr; } }
+  .wallet-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .wallet-card .chain { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .wallet-card .cur { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+  .wallet-card img { width: 100px; height: 100px; border-radius: 6px; display: block; margin: 0 auto 10px; }
+  .wallet-card .addr { font-family: monospace; font-size: 10px; color: var(--muted); word-break: break-all; background: var(--bg); padding: 6px; border-radius: 6px; cursor: pointer; }
+  .wallet-card .addr:hover { color: var(--accent2); }
+
+  footer { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px; }
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <span style="font-size:22px">🧠</span>
+  <h1>Brain Dump <span>Organizer</span> <span class="badge">FREE</span></h1>
+</header>
+
+<main>
+  <div class="hero">
+    <h2>Turn <em>Chaos</em> into Clarity</h2>
+    <p>Paste your messy thoughts, meeting notes, or random ideas — AI organizes them instantly.</p>
+    <div class="chips">
+      <div class="chip">✅ Action Items</div>
+      <div class="chip">📋 Summary</div>
+      <div class="chip">🏷️ Tags</div>
+      <div class="chip">📝 Markdown Export</div>
+      <div class="chip">💾 Auto-save history</div>
+      <div class="chip">🔒 Runs in browser</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- LEFT: Input -->
+    <div>
+      <!-- API Config -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">⚙️ AI Provider</div>
+        <div class="provider-row">
+          <button class="prov-btn active" onclick="selectProv('openai',this)">OpenAI<span class="tag">gpt-4o-mini</span></button>
+          <button class="prov-btn" onclick="selectProv('openrouter',this)">OpenRouter<span class="tag">free</span></button>
+          <button class="prov-btn" onclick="selectProv('deepseek',this)">DeepSeek<span class="tag">low cost</span></button>
+          <button class="prov-btn" onclick="selectProv('groq',this)">Groq<span class="tag">free</span></button>
+        </div>
+        <div class="row">
+          <div class="input-group">
+            <label>API Key (saved locally, never sent to our servers)</label>
+            <input type="password" id="api-key" placeholder="sk-...">
+          </div>
+          <button class="save-btn" onclick="saveKey()">Save</button>
+        </div>
+        <div id="key-hint" style="font-size:11px;color:var(--muted);margin-top:6px;"></div>
+      </div>
+
+      <!-- Dump Input -->
+      <div class="card">
+        <div class="card-title">✍️ Your Brain Dump</div>
+        <div class="templates">
+          <span style="font-size:12px;color:var(--muted);margin-right:4px;">Try:</span>
+          <button class="tpl-btn" onclick="loadTpl('meeting')">📅 Meeting notes</button>
+          <button class="tpl-btn" onclick="loadTpl('ideas')">💡 Random ideas</button>
+          <button class="tpl-btn" onclick="loadTpl('todo')">📌 To-do dump</button>
+          <button class="tpl-btn" onclick="loadTpl('journal')">📔 Journal</button>
+        </div>
+        <textarea id="dump-input" placeholder="Just start typing... anything goes.
+
+Examples:
+- Need to call John about the Q2 report
+- The landing page feels slow, maybe optimize images?
+- Team seems burned out lately, should do a retrospective
+- Buy groceries: milk eggs bread
+- Idea: what if we added dark mode to the dashboard
+- Follow up with Sarah on the contract by Friday"></textarea>
+        <div class="char-count"><span id="char-count">0</span> characters</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Options + History -->
+    <div>
+      <!-- Mode -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">🎯 Output Mode</div>
+        <div class="mode-grid">
+          <button class="mode-btn active" onclick="selectMode('full',this)">
+            <span class="icon">🗂️</span>
+            <span class="name">Full Breakdown</span>
+            <span class="desc">Actions + Summary + Tags</span>
+          </button>
+          <button class="mode-btn" onclick="selectMode('actions',this)">
+            <span class="icon">✅</span>
+            <span class="name">Action Items Only</span>
+            <span class="desc">Checklist, ready to execute</span>
+          </button>
+          <button class="mode-btn" onclick="selectMode('summary',this)">
+            <span class="icon">📋</span>
+            <span class="name">Summary Only</span>
+            <span class="desc">TL;DR of your dump</span>
+          </button>
+          <button class="mode-btn" onclick="selectMode('structured',this)">
+            <span class="icon">📝</span>
+            <span class="name">Structured Notes</span>
+            <span class="desc">Markdown with sections</span>
+          </button>
+        </div>
+        <div class="input-group">
+          <label>Extra Instructions (optional)</label>
+          <input type="text" id="extra-prompt" placeholder="e.g. Group by priority, focus on work items only">
+        </div>
+      </div>
+
+      <button class="go-btn" id="go-btn" onclick="organize()">🧠 Organize with AI</button>
+      <div class="progress" id="progress"><div class="progress-fill"></div></div>
+      <div class="err-msg" id="err-msg"></div>
+
+      <!-- History -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title" style="justify-content:space-between;">
+          🕐 Recent Sessions
+          <button onclick="clearHistory()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;">Clear all</button>
+        </div>
+        <div class="history-list" id="history-list">
+          <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px 0;">No history yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-header">
+      <div class="results-title">✨ Organized Output</div>
+      <div class="action-btns">
+        <button class="action-btn primary" onclick="copyMd()">📋 Copy Markdown</button>
+        <button class="action-btn" onclick="downloadMd()">⬇ Download .md</button>
+        <button class="action-btn" onclick="copyPlain()">Copy Plain Text</button>
+      </div>
+    </div>
+    <div class="sections-grid" id="sections-grid"></div>
+  </div>
+
+  <!-- Donate -->
+  <div class="donate">
+    <h3>☕ Support This Tool</h3>
+    <p>Free forever. If it saved you time, a small tip means a lot!</p>
+    <div class="wallet-grid">
+      <div class="wallet-card">
+        <div class="chain">USDT · TRC-20</div>
+        <div class="cur">💵 USDT</div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=TSvC67jexputnNHayVR8fpScwFmwvZV8jp" alt="USDT QR">
+        <div class="addr" onclick="copyAddr('TSvC67jexputnNHayVR8fpScwFmwvZV8jp',this)">TSvC67jexputnNHayVR8fpScwFmwvZV8jp</div>
+      </div>
+      <div class="wallet-card">
+        <div class="chain">ETH · ERC-20</div>
+        <div class="cur">💎 ETH</div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=0x11e764fac3fcd4be16da43a252a62b156e06a632" alt="ETH QR">
+        <div class="addr" onclick="copyAddr('0x11e764fac3fcd4be16da43a252a62b156e06a632',this)">0x11e764fac3fcd4be16da43a252a62b156e06a632</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>Brain Dump Organizer — Free forever · Nothing leaves your browser · No signup required</footer>
+
+<script>
+// ===== CONFIG =====
+let provider = 'openai';
+let mode = 'full';
+let lastResult = '';
+
+const PROVIDERS = {
+  openai:     { url:'https://api.openai.com/v1/chat/completions',        model:'gpt-4o-mini' },
+  openrouter: { url:'https://openrouter.ai/api/v1/chat/completions',     model:'meta-llama/llama-3.3-70b-instruct:free' },
+  deepseek:   { url:'https://api.deepseek.com/v1/chat/completions',      model:'deepseek-chat' },
+  groq:       { url:'https://api.groq.com/openai/v1/chat/completions',   model:'llama-3.3-70b-versatile' }
+};
+
+const TEMPLATES = {
+  meeting: `Team standup notes - Monday
+
+- Alice finished the auth module, will push PR today
+- Bob still blocked on the DB migration, needs help from DevOps
+- Need to schedule design review for new dashboard before end of week
+- Launch date moved to March 15, everyone needs to update their timelines
+- Discussed switching to a new analytics provider - pros/cons unclear
+- Sarah asked about the Q4 budget - need to get back to her by Wednesday
+- Low morale issue with backend team - maybe do a team lunch?
+- Action: update the roadmap doc, assign Bob a DevOps buddy`,
+
+  ideas: `Random ideas dump - brain clearing
+
+what if we did a weekly newsletter?
+the onboarding flow is confusing for new users - heard this 3 times now
+could we add AI suggestions to the search box
+competitive pricing is becoming an issue - check what Notion charges
+dark mode would be amazing
+collaborate with micro-influencers in the productivity space
+podcast guesting could drive top of funnel traffic
+the mobile app is buggy on older iPhones - need to test on iOS 14
+affiliate program? maybe 20% commission
+add keyboard shortcuts everywhere`,
+
+  todo: `stuff to do this week
+
+urgent: fix the login bug on production before standup
+email Thomas about invoice (overdue 2 weeks!)
+dentist appointment - reschedule for next month
+finish reading "Deep Work" chapter 5 and take notes
+prepare slides for Friday investor call
+research competitors: Notion Obsidian Roam Logseq
+pay quarterly taxes - deadline is the 15th
+call mom for her birthday on Thursday
+update LinkedIn with recent projects
+review and merge 3 PRs waiting in the queue
+water the plants they look sad
+buy new running shoes`,
+
+  journal: `Today's thoughts - feeling scattered
+
+Had a good meeting with the client but left feeling like I didn't communicate value clearly. Need to work on that.
+The project is running 2 weeks behind. Partly my fault for not pushing back earlier on scope creep. Learn from this.
+I keep putting off the important-but-not-urgent work. Deep work sessions at 6am are working when I actually do them.
+Side project gained 3 new users this week! Small but meaningful progress.
+Need to read more - been doom scrolling too much before bed.
+Worried about the funding situation. Should prepare a backup plan.
+Grateful for the team - they really stepped up during the crunch last week.`
+};
+
+const PROMPTS = {
+  full: `You are a productivity assistant. Analyze the following brain dump and extract structured information.
+
+Return a JSON object with this exact structure:
+{
+  "summary": "2-3 sentence overview of what this brain dump is about",
+  "action_items": ["specific actionable task 1", "specific actionable task 2", ...],
+  "key_points": ["important insight or decision 1", "key point 2", ...],
+  "tags": ["tag1", "tag2", "tag3", ...],
+  "markdown": "# Brain Dump Summary\\n\\n## Summary\\n[summary]\\n\\n## Action Items\\n- [ ] [item1]\\n...\\n\\n## Key Points\\n- [point1]\\n...\\n\\n## Tags\\n[tags]"
+}
+
+Rules:
+- action_items: concrete, specific next actions (5-15 items)
+- key_points: important insights, decisions, problems identified (3-8 items)  
+- tags: 3-8 relevant topic tags
+- Return ONLY the JSON, no markdown fences, no explanation`,
+
+  actions: `Extract ONLY action items from this brain dump.
+
+Return a JSON object:
+{
+  "action_items": ["specific actionable task 1", ...],
+  "markdown": "# Action Items\\n\\n- [ ] [item1]\\n..."
+}
+
+Make each action item specific, concrete, and actionable. Return ONLY JSON.`,
+
+  summary: `Write a clear, structured summary of this brain dump.
+
+Return a JSON object:
+{
+  "summary": "comprehensive 3-5 sentence summary",
+  "key_points": ["key point 1", ...],
+  "markdown": "# Summary\\n\\n[summary]\\n\\n## Key Points\\n- [point1]\\n..."
+}
+
+Return ONLY JSON.`,
+
+  structured: `Convert this brain dump into well-structured notes.
+
+Return a JSON object:
+{
+  "summary": "brief overview",
+  "sections": [{"title": "Section Name", "items": ["point 1", "point 2"]}, ...],
+  "markdown": "# Notes\\n\\n## [Section]\\n- [item]\\n..."
+}
+
+Group logically, 2-6 sections. Return ONLY JSON.`
+};
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  loadKey(provider);
+  renderHistory();
+  document.getElementById('dump-input').addEventListener('input', updateCount);
+});
+
+function updateCount() {
+  const v = document.getElementById('dump-input').value;
+  document.getElementById('char-count').textContent = v.length.toLocaleString();
+}
+
+function selectProv(p, btn) {
+  provider = p;
+  document.querySelectorAll('.prov-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadKey(p);
+}
+function loadKey(p) {
+  const k = localStorage.getItem('api_key_' + p) || '';
+  document.getElementById('api-key').value = k;
+  document.getElementById('key-hint').textContent = k ? '✓ Key loaded' : '';
+}
+function saveKey() {
+  const k = document.getElementById('api-key').value.trim();
+  if (!k) return;
+  localStorage.setItem('api_key_' + provider, k);
+  document.getElementById('key-hint').textContent = '✓ Saved!';
+  setTimeout(() => document.getElementById('key-hint').textContent = '✓ Key loaded', 1200);
+}
+
+function selectMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function loadTpl(t) {
+  document.getElementById('dump-input').value = TEMPLATES[t];
+  updateCount();
+}
+
+// ===== ORGANIZE =====
+async function organize() {
+  const key = document.getElementById('api-key').value.trim() || localStorage.getItem('api_key_' + provider) || '';
+  if (!key) { showErr('Please enter your API key first.'); return; }
+  const text = document.getElementById('dump-input').value.trim();
+  if (!text) { showErr('Please enter some text to organize.'); return; }
+
+  const btn = document.getElementById('go-btn');
+  btn.disabled = true; btn.textContent = '⏳ Organizing...';
+  document.getElementById('progress').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  hideErr();
+
+  try {
+    const p = PROVIDERS[provider];
+    const extra = document.getElementById('extra-prompt').value.trim();
+    let sysPrompt = PROMPTS[mode];
+    if (extra) sysPrompt += `\n\nAdditional instructions: ${extra}`;
+
+    const hdrs = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` };
+    if (provider === 'openrouter') {
+      hdrs['HTTP-Referer'] = 'https://oliverwqcwrw.github.io/brain-dump-organizer/';
+      hdrs['X-Title'] = 'Brain Dump Organizer';
+    }
+
+    const resp = await fetch(p.url, {
+      method: 'POST', headers: hdrs,
+      body: JSON.stringify({
+        model: p.model,
+        messages: [
+          { role: 'system', content: sysPrompt },
+          { role: 'user', content: text }
+        ],
+        temperature: 0.3, max_tokens: 2048
+      })
+    });
+
+    if (!resp.ok) {
+      const e = await resp.json().catch(() => ({}));
+      throw new Error(e?.error?.message || `API error ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    let raw = (data.choices?.[0]?.message?.content || '').trim();
+    raw = raw.replace(/^```[a-z]*\n?/i, '').replace(/```$/i, '').trim();
+    const parsed = JSON.parse(raw);
+    renderResults(parsed);
+    saveToHistory(text, parsed);
+
+  } catch (e) {
+    showErr('❌ ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = '🧠 Organize with AI';
+    document.getElementById('progress').style.display = 'none';
+  }
+}
+
+// ===== RENDER =====
+function renderResults(d) {
+  lastResult = d.markdown || '';
+  const grid = document.getElementById('sections-grid');
+  grid.innerHTML = '';
+
+  if (d.summary) {
+    grid.innerHTML += `
+      <div class="result-card full">
+        <h4 class="blue">📋 Summary</h4>
+        <div class="summary-text">${esc(d.summary)}</div>
+      </div>`;
+  }
+
+  if (d.action_items?.length) {
+    const items = d.action_items.map((t, i) => `
+      <li>
+        <input type="checkbox" id="chk${i}" onchange="toggleDone(this)">
+        <label for="chk${i}">${esc(t)}</label>
+      </li>`).join('');
+    grid.innerHTML += `
+      <div class="result-card">
+        <h4 class="green">✅ Action Items (${d.action_items.length})</h4>
+        <ul class="action-list">${items}</ul>
+      </div>`;
+  }
+
+  if (d.key_points?.length) {
+    const pts = d.key_points.map(p => `<li><span style="color:var(--accent4);margin-right:8px;">▸</span>${esc(p)}</li>`).join('');
+    grid.innerHTML += `
+      <div class="result-card">
+        <h4 class="purple">💡 Key Points</h4>
+        <ul class="action-list">${pts}</ul>
+      </div>`;
+  }
+
+  if (d.sections?.length) {
+    d.sections.forEach(s => {
+      const pts = s.items.map(it => `<li><span style="color:var(--accent);margin-right:8px;">▸</span>${esc(it)}</li>`).join('');
+      grid.innerHTML += `
+        <div class="result-card">
+          <h4 class="blue">${esc(s.title)}</h4>
+          <ul class="action-list">${pts}</ul>
+        </div>`;
+    });
+  }
+
+  if (d.tags?.length) {
+    const tags = d.tags.map(t => `<span class="tag">#${esc(t)}</span>`).join('');
+    grid.innerHTML += `
+      <div class="result-card">
+        <h4 class="orange">🏷️ Tags</h4>
+        <div class="tag-list">${tags}</div>
+      </div>`;
+  }
+
+  if (d.markdown) {
+    grid.innerHTML += `
+      <div class="result-card full">
+        <h4 style="color:var(--muted)">📄 Markdown</h4>
+        <div class="raw-md">${esc(d.markdown)}</div>
+      </div>`;
+  }
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleDone(cb) {
+  const lbl = cb.nextElementSibling;
+  lbl.classList.toggle('done', cb.checked);
+}
+
+// ===== HISTORY =====
+function saveToHistory(input, result) {
+  const h = JSON.parse(localStorage.getItem('bd_history') || '[]');
+  h.unshift({ time: Date.now(), preview: input.slice(0, 60).replace(/\n/g, ' '), result });
+  localStorage.setItem('bd_history', JSON.stringify(h.slice(0, 20)));
+  renderHistory();
+}
+
+function renderHistory() {
+  const h = JSON.parse(localStorage.getItem('bd_history') || '[]');
+  const el = document.getElementById('history-list');
+  if (!h.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px 0;">No history yet</div>'; return; }
+  el.innerHTML = h.map((item, i) => `
+    <div class="history-item" onclick="loadHistory(${i})">
+      <span>${esc(item.preview)}…</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span class="time">${timeAgo(item.time)}</span>
+        <span class="del" onclick="delHistory(event,${i})">✕</span>
+      </span>
+    </div>`).join('');
+}
+
+function loadHistory(i) {
+  const h = JSON.parse(localStorage.getItem('bd_history') || '[]');
+  if (h[i]) renderResults(h[i].result);
+}
+
+function delHistory(e, i) {
+  e.stopPropagation();
+  const h = JSON.parse(localStorage.getItem('bd_history') || '[]');
+  h.splice(i, 1);
+  localStorage.setItem('bd_history', JSON.stringify(h));
+  renderHistory();
+}
+
+function clearHistory() {
+  localStorage.removeItem('bd_history');
+  renderHistory();
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+
+// ===== EXPORT =====
+function copyMd() {
+  navigator.clipboard.writeText(lastResult).then(() => alert('Markdown copied!'));
+}
+function downloadMd() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([lastResult], { type: 'text/markdown' }));
+  a.download = 'brain-dump-' + new Date().toISOString().slice(0,10) + '.md';
+  a.click();
+}
+function copyPlain() {
+  const text = lastResult.replace(/#+\s/g, '').replace(/- \[ \]/g, '☐').replace(/\*\*/g, '');
+  navigator.clipboard.writeText(text).then(() => alert('Copied!'));
+}
+
+// ===== HELPERS =====
+function showErr(msg) { const e = document.getElementById('err-msg'); e.textContent = msg; e.style.display = 'block'; }
+function hideErr() { document.getElementById('err-msg').style.display = 'none'; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function copyAddr(a, el) { navigator.clipboard.writeText(a).then(() => { el.style.color='var(--accent2)'; setTimeout(()=>el.style.color='',1500); }); }
+</script>
+</body>
+</html>
